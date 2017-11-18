@@ -7,6 +7,5 @@ namespace Accountant.Domain
     {
         [Required]
         public Guid TenantId { get; set; }
-        public Tenant Tenant { get; set; }
     }
 }
