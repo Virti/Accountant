@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Accountant.DataAccess
 {
-    public class TenantContext : DbContext
+    public class UsersContext : DbContext
     {
         public DbSet<Tenant> Tenants { get; set; }
     }
