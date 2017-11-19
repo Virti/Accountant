@@ -1,13 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using Accountant.Authorization.Middleware.Jwt;
+using Accountant.Authorization.Token.Jwt;
+using Accountant.Authorization.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Accountant.Api
 {
@@ -23,6 +29,7 @@ namespace Accountant.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddAuthentication(Configuration.GetSection("JWT"));
             services.AddMvc();
         }
 
@@ -34,6 +41,8 @@ namespace Accountant.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            //app.UseMiddleware<AuthorizationMiddleware>();
+            app.UseAuthentication();
             app.UseMvc();
         }
     }
