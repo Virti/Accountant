@@ -14,6 +14,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Accountant.DataAccess;
+using Microsoft.EntityFrameworkCore;
 
 namespace Accountant.Api
 {
@@ -29,6 +31,10 @@ namespace Accountant.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<UsersContext>(opt => 
+                opt.UseSqlServer(Configuration.GetConnectionString(nameof(UsersContext)))
+            );
+
             services.AddAuthentication(Configuration.GetSection("JWT"));
             services.AddMvc();
         }

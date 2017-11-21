@@ -1,4 +1,4 @@
-namespace Accountant.Domain
+namespace Accountant.Domain.Users
 {
     public class Tenant : BaseEntity
     {
