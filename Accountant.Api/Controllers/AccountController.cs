@@ -12,9 +12,9 @@ namespace Accountant.Api.Controllers {
     [Route("api/[controller]")]
     public class AccountController : Controller {
         private readonly ITokenProvider _tokenProvider;
-        private readonly IUserService _userService;
+        private readonly IUsersService _userService;
 
-        public AccountController(ITokenProvider tokenProvider, IUserService userService)
+        public AccountController(ITokenProvider tokenProvider, IUsersService userService)
         {
             _tokenProvider = tokenProvider;
             _userService = userService;

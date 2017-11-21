@@ -8,12 +8,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Accountant.Users.Services
 {
-    public interface IUserService {
-        Task<UserAccount> FindByEmailAddressAsync(string emailAddress);
-        Task<UserAccount> SignInAsync(string emailAddress, string password);
-    }
 
-    public class UsersService : IUserService
+    public class UsersService : IUsersService
     {
         private readonly UsersContext _context;
 
