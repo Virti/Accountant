@@ -12,5 +12,13 @@ namespace Accountant.DataAccess
         public UsersContext(DbContextOptions<UsersContext> options) : base(options)
         {
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder) {
+            modelBuilder.Entity<UserAccount>()
+                .HasOne(u => u.Tenant)
+                .WithMany()
+                .HasForeignKey(u => u.TenantId)
+                .OnDelete(DeleteBehavior.Cascade);
+        }
     }
 }
