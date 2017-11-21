@@ -16,6 +16,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Accountant.DataAccess;
 using Microsoft.EntityFrameworkCore;
+using Accountant.Users.Services;
 
 namespace Accountant.Api
 {
@@ -34,6 +35,8 @@ namespace Accountant.Api
             services.AddDbContext<UsersContext>(opt => 
                 opt.UseSqlServer(Configuration.GetConnectionString(nameof(UsersContext)))
             );
+
+            services.AddTransient<IUsersService, UsersService>();
 
             services.AddAuthentication(Configuration.GetSection("JWT"));
             services.AddMvc();
