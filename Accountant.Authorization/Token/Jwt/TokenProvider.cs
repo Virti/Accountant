@@ -70,7 +70,10 @@ namespace Accountant.Authorization.Token.Jwt
                 { "iat", now },
                 { "nbf", now },
                 { "exp", exp },
-                { "jti", Guid.NewGuid().ToString("N") }
+                { "jti", Guid.NewGuid().ToString("N") },
+
+                { "tenant", tenantId },
+                { "user", userId }
             };
         }
     }
