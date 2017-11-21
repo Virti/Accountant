@@ -1,21 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Accountant.Api.Controllers
 {
+
     [Route("api/[controller]")]
     [Authorize]
-    public class ValuesController : Controller
+    public class ValuesController : BaseController
     {
         // GET api/values
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<Guid> Get()
         {
-            return new string[] { "value1", "value2" };
+            return new Guid[] { TenantId, UserId };
         }
 
         // GET api/values/5
