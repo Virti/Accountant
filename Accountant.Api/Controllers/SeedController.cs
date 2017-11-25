@@ -89,6 +89,13 @@ namespace Accountant.Api.Controllers {
 
             return Ok();
         }
+
+        protected override void Dispose(bool disposing){
+            if(disposing){
+                _budgetsContext?.Dispose();
+                _usersContext?.Dispose();
+            }
+        }
     }
 
     public enum SeedStateEnum {

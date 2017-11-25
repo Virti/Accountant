@@ -6,12 +6,14 @@ using Microsoft.Extensions.Logging;
 
 namespace Accountant.Api.Controllers
 {
-    public abstract class BaseController : Controller
+    public abstract class BaseController : Controller, IDisposable
     {
         private BudgetsContext _budgetsContext;
-        protected BudgetsContext BudgetsContext {
-            get {
-                if(_budgetsContext == null)
+        protected BudgetsContext BudgetsContext
+        {
+            get
+            {
+                if (_budgetsContext == null)
                 {
                     Logger.LogInformation($"Setting up BudgetsContext with TenantId set to {TenantId}");
 
@@ -23,8 +25,10 @@ namespace Accountant.Api.Controllers
             }
         }
 
-        protected ILogger<BaseController> Logger {
-            get {
+        protected ILogger<BaseController> Logger
+        {
+            get
+            {
                 return (ILogger<BaseController>)HttpContext.RequestServices.GetService(typeof(ILogger<BaseController>));
             }
         }
@@ -33,12 +37,12 @@ namespace Accountant.Api.Controllers
         {
             get
             {
-                if(!User.Identity.IsAuthenticated)
+                if (!User.Identity.IsAuthenticated)
                     return Guid.Empty;
-                
+
                 var tenantClaim = User.Claims.FirstOrDefault(c => c.Type == "tenant");
-                
-                if(tenantClaim == null)
+
+                if (tenantClaim == null)
                     return Guid.Empty; // shouldn't we force signout here?
 
                 return new Guid(tenantClaim.Value);
@@ -48,15 +52,25 @@ namespace Accountant.Api.Controllers
         {
             get
             {
-                if(!User.Identity.IsAuthenticated)
+                if (!User.Identity.IsAuthenticated)
                     return Guid.Empty;
-                
+
                 var tenantClaim = User.Claims.FirstOrDefault(c => c.Type == "user");
-                
-                if(tenantClaim == null)
+
+                if (tenantClaim == null)
                     return Guid.Empty; // shouldn't we force signout here?
 
                 return new Guid(tenantClaim.Value);
+            }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+            
+            if (disposing)
+            {
+                _budgetsContext?.Dispose();
             }
         }
     }
