@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using Accountant.DataAccess;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -30,6 +31,12 @@ namespace Accountant.Api.Controllers
             get
             {
                 return (ILogger<BaseController>)HttpContext.RequestServices.GetService(typeof(ILogger<BaseController>));
+            }
+        }
+
+        protected IMapper Mapper {
+            get {
+                return (IMapper)HttpContext.RequestServices.GetService(typeof(IMapper));
             }
         }
 

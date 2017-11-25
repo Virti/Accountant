@@ -17,6 +17,8 @@ using Microsoft.IdentityModel.Tokens;
 using Accountant.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Accountant.Users.Services;
+using Accountant.Api.ViewModels.Budgets;
+using AutoMapper;
 
 namespace Accountant.Api
 {
@@ -32,15 +34,15 @@ namespace Accountant.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<UsersContext>(opt => 
-                opt.UseSqlServer(Configuration.GetConnectionString(nameof(UsersContext)))
-            );
+            services.AddDbContext<UsersContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString(nameof(UsersContext))));
+            services.AddDbContext<BudgetsContext>(opt => opt.UseSqlServer(Configuration.GetConnectionString(nameof(BudgetsContext))));
 
             services.AddTransient<IUsersService, UsersService>();
 
-            services.AddDbContext<BudgetsContext>(opt => 
-                opt.UseSqlServer(Configuration.GetConnectionString(nameof(BudgetsContext)))
-            );
+            services.AddSingleton<IMapper>(m => new MapperConfiguration(cfg => {
+                cfg.AddProfile<AutomapperBudgetsProfile>();
+            }).CreateMapper());
+
 
             services.AddAuthentication(Configuration.GetSection("JWT"));
             services.AddMvc();
