@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Accountant.DataAccess;
+using Accountant.Domain.Budget;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Accountant.Api.Controllers
 {
@@ -13,9 +16,9 @@ namespace Accountant.Api.Controllers
     {
         // GET api/values
         [HttpGet]
-        public IEnumerable<Guid> Get()
+        public async Task<IEnumerable<OperationCategory>> GetAsync()
         {
-            return new Guid[] { TenantId, UserId };
+            return await BudgetsContext.OperationCategories.ToListAsync();
         }
 
         // GET api/values/5

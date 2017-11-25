@@ -7,23 +7,20 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Accountant.DataAccess.Multitenancy
 {
-    public abstract class BaseMultitenantContext : DbContext
+    public abstract class BaseMultitenantContext<TContext> : DbContext
+        where TContext : DbContext
     {
-        public Guid TenantId { get; }
+        public Guid TenantId { get; private set; }
 
-        private MethodInfo ConfigureGlobalFiltersMethodInfo = typeof(BaseMultitenantContext).GetMethod(nameof(ConfigureGlobalFilters), BindingFlags.Instance | BindingFlags.NonPublic);
+        private MethodInfo ConfigureGlobalFiltersMethodInfo = typeof(TContext).GetMethod(nameof(ConfigureGlobalFilters), BindingFlags.Instance | BindingFlags.NonPublic);
 
-        protected BaseMultitenantContext(TenantInfoDto tenantInfoDto, DbContextOptions<UsersContext> options)
+        protected BaseMultitenantContext(DbContextOptions<TContext> options)
             : base (options)
         {
-            if(tenantInfoDto == null || tenantInfoDto.TenantId == Guid.Empty)
-            {
-                // probably you're trying to instantiate context too early (before TenantInfoDto is created in middleware)
-                throw new ArgumentNullException(nameof(tenantInfoDto));
-            }
-
-            TenantId = tenantInfoDto.TenantId;
         }
+
+        public void SetTenantId(Guid tenantId)
+            => TenantId = tenantId;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,13 +28,15 @@ namespace Accountant.DataAccess.Multitenancy
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {
+                
+
                 ConfigureGlobalFiltersMethodInfo
                     .MakeGenericMethod(entityType.ClrType)
                     .Invoke(this, new object[] { modelBuilder, entityType });
             }
         }
 
-        protected void ConfigureGlobalFilters<TEntity>(ModelBuilder modelBuilder, IMutableEntityType entityType)
+        protected virtual void ConfigureGlobalFilters<TEntity>(ModelBuilder modelBuilder, IMutableEntityType entityType)
             where TEntity : class, IBaseEntity
         {
             if (entityType.BaseType == null && ShouldFilterEntity<TEntity>())

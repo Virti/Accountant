@@ -38,6 +38,10 @@ namespace Accountant.Api
 
             services.AddTransient<IUsersService, UsersService>();
 
+            services.AddDbContext<BudgetsContext>(opt => 
+                opt.UseSqlServer(Configuration.GetConnectionString(nameof(BudgetsContext)))
+            );
+
             services.AddAuthentication(Configuration.GetSection("JWT"));
             services.AddMvc();
         }
@@ -50,7 +54,6 @@ namespace Accountant.Api
                 app.UseDeveloperExceptionPage();
             }
 
-            //app.UseMiddleware<AuthorizationMiddleware>();
             app.UseAuthentication();
             app.UseMvc();
         }

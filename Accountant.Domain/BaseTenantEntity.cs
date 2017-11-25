@@ -9,8 +9,5 @@ namespace Accountant.Domain
     {
         [Required]
         public Guid TenantId { get; set; }
-        
-        [ForeignKey("TenantId")]
-        public Tenant Tenant { get; set; }
     }
 }
