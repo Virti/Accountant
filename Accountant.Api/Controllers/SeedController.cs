@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Accountant.DataAccess;
+using Accountant.Domain.Budget;
 using Accountant.Domain.Users;
 using Accountant.Users.Security;
 using Microsoft.AspNetCore.Mvc;
@@ -11,10 +12,12 @@ namespace Accountant.Api.Controllers {
     [Route("api/seed")]
     public class SeedController : Controller {
         private readonly UsersContext _usersContext;
+        private readonly BudgetsContext _budgetsContext;
 
-        public SeedController(UsersContext usersContext)
+        public SeedController(UsersContext usersContext, BudgetsContext budgetsContext)
         {
             _usersContext = usersContext;
+            _budgetsContext = budgetsContext;
         }
 
         [HttpGet("all")]
@@ -28,6 +31,10 @@ namespace Accountant.Api.Controllers {
 
                 case SeedStateEnum.Users:
                     await Users();
+                    return RedirectToAction(nameof(All), new { state = SeedStateEnum.Done });
+                
+                case SeedStateEnum.OperationCategories:
+                    await OperationCategories();
                     return RedirectToAction(nameof(All), new { state = SeedStateEnum.Done });
 
                 default:
@@ -61,11 +68,33 @@ namespace Accountant.Api.Controllers {
 
             return Ok();
         }
+
+        public async Task<IActionResult> OperationCategories()
+        {
+            var tenantId = await _usersContext.Tenants.Select(t => t.Id).FirstOrDefaultAsync();
+
+            await _budgetsContext.OperationCategories.AddAsync(new OperationCategory {
+                Label = "Food",
+                Kind = OperationKind.Outcome,
+                TenantId = tenantId
+            });
+
+            await _budgetsContext.OperationCategories.AddAsync(new OperationCategory {
+                Label = "Salary",
+                Kind = OperationKind.Income,
+                TenantId = tenantId
+            });
+
+            await _budgetsContext.SaveChangesAsync();
+
+            return Ok();
+        }
     }
 
     public enum SeedStateEnum {
         Tenants,
         Users,
+        OperationCategories,
 
         Done
     }
